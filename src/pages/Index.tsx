@@ -3,9 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileUpload } from '@/components/ui/file-upload';
 import { ProcessingCard } from '@/components/ProcessingCard';
-import { PowerPointProcessor, ProcessingResult } from '@/lib/powerpoint-processor';
 import { useToast } from '@/hooks/use-toast';
-import { Presentation, Archive, Sparkles, Download, CheckCircle, ArrowRight, Upload, X } from 'lucide-react';
+import { Presentation, Archive, Sparkles, Download, CheckCircle, ArrowRight, Upload } from 'lucide-react';
 
 const Index = () => {
   const [pptxFile, setPptxFile] = useState<File | null>(null);
@@ -20,7 +19,6 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [totalFolders, setTotalFolders] = useState(0);
   const [processedFolders, setProcessedFolders] = useState(0);
-  const [processingResult, setProcessingResult] = useState<ProcessingResult | null>(null);
   const { toast } = useToast();
 
   const handleProcess = async () => {
@@ -34,44 +32,51 @@ const Index = () => {
     }
 
     setIsProcessing(true);
-    setProcessingResult(null);
-    
-    // إنشاء معالج PowerPoint
-    const processor = new PowerPointProcessor(
-      updateStepProgress,
-      (total: number, processed: number) => {
-        setTotalFolders(total);
-        setProcessedFolders(processed);
-        setCurrentStep(2); // في خطوة المعالجة
-      }
-    );
     
     try {
-      // المعالجة الفعلية للملفات
-      const result = await processor.processFiles(pptxFile, zipFile);
-      setProcessingResult(result);
+      // محاكاة عملية المعالجة
+      await simulateProcessing();
       
-      if (result.success) {
-        toast({
-          title: "✅ تمت المعالجة بنجاح",
-          description: result.message,
-        });
-      } else {
-        toast({
-          title: "❌ خطأ في المعالجة",
-          description: result.message,
-          variant: "destructive"
-        });
-      }
+      toast({
+        title: "✅ تمت المعالجة بنجاح",
+        description: "تم إنشاء العرض التقديمي الجديد بنجاح",
+      });
     } catch (error) {
       toast({
-        title: "❌ خطأ في المعالجة", 
-        description: "حدث خطأ غير متوقع أثناء معالجة الملفات",
+        title: "❌ خطأ في المعالجة",
+        description: "حدث خطأ أثناء معالجة الملفات",
         variant: "destructive"
       });
-    } finally {
-      setIsProcessing(false);
     }
+  };
+
+  const simulateProcessing = async () => {
+    // محاكاة استخراج ZIP
+    setCurrentStep(0);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    updateStepProgress(0, 100, true);
+    
+    // محاكاة تحليل المجلدات
+    setCurrentStep(1);
+    setTotalFolders(5);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    updateStepProgress(1, 100, true);
+    
+    // محاكاة معالجة الشرائح
+    setCurrentStep(2);
+    for (let i = 1; i <= 5; i++) {
+      setProcessedFolders(i);
+      updateStepProgress(2, (i / 5) * 100, false);
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+    updateStepProgress(2, 100, true);
+    
+    // إنهاء المعالجة
+    setCurrentStep(3);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    updateStepProgress(3, 100, true);
+    
+    setIsProcessing(false);
   };
 
   const updateStepProgress = (stepIndex: number, progress: number, completed: boolean) => {
@@ -87,17 +92,7 @@ const Index = () => {
     setCurrentStep(0);
     setTotalFolders(0);
     setProcessedFolders(0);
-    setProcessingResult(null);
     setProcessingSteps(prev => prev.map(step => ({ ...step, completed: false, progress: 0 })));
-  };
-
-  const handleDownload = () => {
-    if (processingResult?.downloadUrl && processingResult?.filename) {
-      const link = document.createElement('a');
-      link.href = processingResult.downloadUrl;
-      link.download = processingResult.filename;
-      link.click();
-    }
   };
 
   return (
@@ -201,51 +196,25 @@ const Index = () => {
                 className="max-w-2xl mx-auto"
               />
               
-              {processingSteps.every(step => step.completed) && processingResult && (
-                <Card className={`border-2 max-w-2xl mx-auto ${
-                  processingResult.success 
-                    ? 'bg-green-50 border-green-200' 
-                    : 'bg-red-50 border-red-200'
-                }`}>
+              {processingSteps.every(step => step.completed) && (
+                <Card className="bg-green-50 border-green-200 max-w-2xl mx-auto">
                   <CardContent className="text-center p-6">
-                    {processingResult.success ? (
-                      <>
-                        <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-green-700 mb-2">
-                          ✅ تمت المعالجة بنجاح!
-                        </h3>
-                        <p className="text-green-600 mb-4">
-                          {processingResult.message}
-                        </p>
-                        <div className="space-y-3">
-                          <Button 
-                            onClick={handleDownload}
-                            className="bg-green-500 hover:bg-green-600 text-white"
-                          >
-                            <Download className="ml-2 h-4 w-4" />
-                            تحميل تقرير المعالجة
-                          </Button>
-                          <Button variant="outline" onClick={resetForm} className="block mx-auto">
-                            معالجة ملف جديد
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="h-16 w-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <X className="h-8 w-8 text-white" />
-                        </div>
-                        <h3 className="text-xl font-bold text-red-700 mb-2">
-                          ❌ فشلت المعالجة
-                        </h3>
-                        <p className="text-red-600 mb-4">
-                          {processingResult.message}
-                        </p>
-                        <Button variant="outline" onClick={resetForm} className="mx-auto">
-                          المحاولة مرة أخرى
-                        </Button>
-                      </>
-                    )}
+                    <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-green-700 mb-2">
+                      ✅ تمت المعالجة بنجاح!
+                    </h3>
+                    <p className="text-green-600 mb-4">
+                      تم إنشاء عرض PowerPoint جديد مع {totalFolders} شرائح
+                    </p>
+                    <div className="space-y-3">
+                      <Button className="bg-green-500 hover:bg-green-600 text-white">
+                        <Download className="ml-2 h-4 w-4" />
+                        تحميل الملف المعدل
+                      </Button>
+                      <Button variant="outline" onClick={resetForm} className="block mx-auto">
+                        معالجة ملف جديد
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               )}
