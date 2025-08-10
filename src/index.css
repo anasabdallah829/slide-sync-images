@@ -2,39 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* تصميم نظام الألوان المتطور للتطبيق - جميع الألوان بصيغة HSL */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* خلفيات رئيسية */
+    --background: 220 20% 98%;
+    --foreground: 222 84% 4.9%;
 
+    /* بطاقات وعناصر */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* ألوان أساسية - أزرق عصري */
+    --primary: 220 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 220 100% 55%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* ألوان ثانوية - برتقالي دافئ */
+    --secondary: 25 95% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 25 95% 55%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* ألوان مكتومة */
+    --muted: 220 13% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* ألوان تمييز */
+    --accent: 220 13% 96%;
+    --accent-foreground: 222 84% 4.9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* ألوان الخطر */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* حدود ومدخلات */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 100% 60%;
+
+    /* التدرجات الجميلة */
+    --gradient-primary: linear-gradient(135deg, hsl(220 100% 60%), hsl(220 100% 70%));
+    --gradient-secondary: linear-gradient(135deg, hsl(25 95% 60%), hsl(25 95% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 100% 60%), hsl(25 95% 60%));
+    --gradient-card: linear-gradient(135deg, hsl(220 13% 98%), hsl(220 13% 100%));
+
+    /* ظلال أنيقة */
+    --shadow-soft: 0 4px 6px -1px hsl(220 100% 60% / 0.1), 0 2px 4px -1px hsl(220 100% 60% / 0.06);
+    --shadow-medium: 0 10px 15px -3px hsl(220 100% 60% / 0.1), 0 4px 6px -2px hsl(220 100% 60% / 0.05);
+    --shadow-large: 0 25px 50px -12px hsl(220 100% 60% / 0.25);
+
+    /* انتقالات سلسة */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --radius: 0.5rem;
 
